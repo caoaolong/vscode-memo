@@ -83,7 +83,7 @@ layui.use(['layer', 'form', 'util'], function() {
                 <div class="memo-card" style="background-color: ${memo.color}">
                     <h4>${memo.title || '无标题'}</h4>
                     <p>${memo.content || ''}</p>
-                    <div class="delete-btn" title="删除">×</div>
+                    <button type="button" class="delete-btn codicon codicon-trash" title="删除" aria-label="删除"></button>
                 </div>
             `);
             
@@ -120,10 +120,10 @@ layui.use(['layer', 'form', 'util'], function() {
     function updateLayout(layout) {
         if (layout === 'grid') {
             $memoList.removeClass('list-layout').addClass('grid-layout');
-            $layoutToggle.attr('src', $layoutToggle.data('list'));
+            $layoutToggle.removeClass('codicon-list-flat').addClass('codicon-layout-panel');
         } else {
             $memoList.removeClass('grid-layout').addClass('list-layout');
-            $layoutToggle.attr('src', $layoutToggle.data('grid'));
+            $layoutToggle.removeClass('codicon-layout-panel').addClass('codicon-list-flat');
         }
     }
 

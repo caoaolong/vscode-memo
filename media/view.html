@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{NODE_MODULES_URI}}/layui/dist/css/layui.css" rel="stylesheet">
+    <link href="{{CODICONS_CSS_URI}}" rel="stylesheet">
     <link href="{{STYLE_URI}}" rel="stylesheet">
     <title>备忘录</title>
 </head>
@@ -23,23 +24,24 @@
     </div>
 
     <div id="main-container" class="hidden">
-        <div class="header">
+        <div class="header header-main">
+            <span class="header-title">备忘录</span>
             <div class="actions">
-                <img id="layout-toggle" src="{{GRID_ICON}}" data-grid="{{GRID_ICON}}" data-list="{{LIST_ICON}}" title="切换布局" class="icon-btn">
-                <img id="settings-btn" src="{{SETTINGS_ICON}}" title="设置" class="icon-btn">
+                <button type="button" id="layout-toggle" class="icon-btn codicon codicon-list-flat" title="切换布局" aria-label="切换布局"></button>
+                <button type="button" id="settings-btn" class="icon-btn codicon codicon-settings-gear" title="设置" aria-label="设置"></button>
             </div>
         </div>
         <div id="memo-list" class="list-layout">
             <div id="add-memo-card" class="memo-card add-card">
-                <img src="{{PLUS_ICON}}" class="plus-icon">
+                <span class="codicon codicon-plus plus-icon"></span>
             </div>
         </div>
     </div>
 
     <div id="settings-container" class="hidden">
-        <div class="header">
-            <h3 class="layui-font-16">设置</h3>
-            <button id="back-btn" class="layui-btn layui-btn-xs layui-btn-primary">返回</button>
+        <div class="header header-with-back">
+            <button type="button" id="back-btn" class="icon-btn codicon codicon-arrow-left back-btn" title="返回" aria-label="返回"></button>
+            <h3 class="layui-font-16 header-title">设置</h3>
         </div>
         <div class="settings-content">
             <button id="reset-password-btn" class="layui-btn layui-btn-primary layui-border-blue">重置密码</button>
