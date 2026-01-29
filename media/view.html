@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{NODE_MODULES_URI}}/layui/dist/css/layui.css" rel="stylesheet">
+    <link href="{{STYLE_URI}}" rel="stylesheet">
+    <title>备忘录</title>
+</head>
+<body>
+    <div id="auth-container" class="hidden">
+        <div class="auth-box">
+            <h2 id="auth-title" class="layui-font-18">设置访问密码</h2>
+            <div class="layui-form layui-form-pane" style="margin-top: 20px;">
+                <div class="layui-form-item">
+                    <input type="password" id="password-input" placeholder="请输入密码" class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                    <button id="auth-btn" class="layui-btn layui-btn-fluid layui-btn-normal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-container" class="hidden">
+        <div class="header">
+            <div class="actions">
+                <img id="layout-toggle" src="{{GRID_ICON}}" data-grid="{{GRID_ICON}}" data-list="{{LIST_ICON}}" title="切换布局" class="icon-btn">
+                <img id="settings-btn" src="{{SETTINGS_ICON}}" title="设置" class="icon-btn">
+            </div>
+        </div>
+        <div id="memo-list" class="list-layout">
+            <div id="add-memo-card" class="memo-card add-card">
+                <img src="{{PLUS_ICON}}" class="plus-icon">
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-container" class="hidden">
+        <div class="header">
+            <h3 class="layui-font-16">设置</h3>
+            <button id="back-btn" class="layui-btn layui-btn-xs layui-btn-primary">返回</button>
+        </div>
+        <div class="settings-content">
+            <button id="reset-password-btn" class="layui-btn layui-btn-primary layui-border-blue">重置密码</button>
+            <button id="clear-all-btn" class="layui-btn layui-btn-primary layui-border-red">清空所有备忘录</button>
+        </div>
+    </div>
+
+    <div id="memo-form-tpl" style="display: none; padding: 20px;">
+        <div class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">标题</label>
+                <div class="layui-input-block">
+                    <input type="text" id="memo-title" placeholder="请输入标题" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">内容 (支持 Markdown)</label>
+                <div class="layui-input-block">
+                    <textarea id="memo-content" placeholder="请输入内容" class="layui-textarea" style="height: 200px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{NODE_MODULES_URI}}/jquery/dist/jquery.min.js"></script>
+    <script src="{{NODE_MODULES_URI}}/layui/dist/layui.js"></script>
+    <script src="{{SCRIPT_URI}}"></script>
+</body>
+</html>

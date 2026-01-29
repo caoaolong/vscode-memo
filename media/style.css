@@ -1,0 +1,282 @@
+:root {
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    color: var(--vscode-foreground);
+    font-family: var(--vscode-font-family);
+    background-color: var(--vscode-sideBar-background) !important;
+    height: 100%;
+    width: 100%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Auth Styles */
+#auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    padding: 20px;
+}
+
+.auth-box {
+    text-align: center;
+    width: 100%;
+    background: var(--vscode-editor-background);
+    padding: 30px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--vscode-widget-border);
+}
+
+.auth-box h2 {
+    color: var(--vscode-foreground);
+    margin-bottom: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 15px;
+    background: var(--vscode-sideBarSectionHeader-background);
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, var(--vscode-panel-border));
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header h3 {
+    margin: 0;
+    flex: 1;
+    color: var(--vscode-sideBarSectionHeader-foreground);
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.icon-btn {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: var(--transition);
+    /* Make icons adapt to theme if they are PNGs with transparency */
+    filter: var(--vscode-icon-filter, none);
+}
+
+/* Auto-detect if we need to invert icons for dark/light themes */
+[class*="vscode-dark"] .icon-btn, [class*="vscode-high-contrast"] .icon-btn {
+    filter: invert(1) brightness(2);
+}
+
+.icon-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Memo Cards */
+#memo-list {
+    display: grid;
+    gap: 15px;
+    padding: 15px;
+}
+
+.list-layout {
+    grid-template-columns: 1fr;
+}
+
+.grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.memo-card {
+    position: relative;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: var(--transition);
+    cursor: pointer;
+    border: 1px solid var(--vscode-widget-border);
+    /* Card background will be set via JS, but let's ensure text is readable */
+    color: var(--vscode-editor-foreground);
+}
+
+.memo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    border-color: var(--vscode-focusBorder);
+}
+
+.memo-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: inherit;
+}
+
+.memo-card p {
+    margin: 0;
+    font-size: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+    color: inherit;
+    opacity: 0.85;
+}
+
+.delete-btn {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: var(--vscode-errorForeground);
+    background: var(--vscode-editor-background);
+    border-radius: 4px;
+    transition: var(--transition);
+    border: 1px solid var(--vscode-widget-border);
+}
+
+.memo-card:hover .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn:hover {
+    background: var(--vscode-button-hoverBackground);
+    color: var(--vscode-button-foreground);
+}
+
+/* Add Card */
+.add-card {
+    background: var(--vscode-button-secondaryBackground) !important;
+    border: 2px dashed var(--vscode-panel-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+    color: var(--vscode-button-secondaryForeground) !important;
+}
+
+.add-card:hover {
+    border-color: var(--vscode-focusBorder);
+    background: var(--vscode-button-secondaryHoverBackground) !important;
+}
+
+.plus-icon {
+    width: 28px;
+    height: 28px;
+    filter: var(--vscode-icon-filter, grayscale(1) opacity(0.5));
+}
+
+[class*="vscode-dark"] .plus-icon, [class*="vscode-high-contrast"] .plus-icon {
+    filter: invert(1) opacity(0.8);
+}
+
+/* Settings */
+#settings-container {
+    padding: 0;
+    background: var(--vscode-sideBar-background);
+    height: 100vh;
+}
+
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+}
+
+/* Layui Overrides for VSCode Theme - Deep Adaptation */
+.layui-layer, .layui-form, .layui-form-item, .layui-input-block {
+    color: var(--vscode-foreground) !important;
+}
+.layui-layer {
+    background-color: var(--vscode-editor-background) !important;
+    color: var(--vscode-editor-foreground) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    border: 1px solid var(--vscode-widget-border) !important;
+}
+.layui-layer-title {
+    background-color: var(--vscode-sideBarSectionHeader-background) !important;
+    color: var(--vscode-sideBarSectionHeader-foreground) !important;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, var(--vscode-panel-border)) !important;
+}
+.layui-layer-content {
+    color: var(--vscode-editor-foreground) !important;
+}
+.layui-layer-btn {
+    border-top: 1px solid var(--vscode-panel-border) !important;
+    padding: 10px 15px !important;
+}
+.layui-layer-btn a {
+    height: 28px !important;
+    line-height: 28px !important;
+    border-radius: 2px !important;
+    font-size: 12px !important;
+}
+.layui-layer-btn .layui-layer-btn0 {
+    background-color: var(--vscode-button-background) !important;
+    border-color: var(--vscode-button-background) !important;
+    color: var(--vscode-button-foreground) !important;
+}
+.layui-layer-btn .layui-layer-btn1 {
+    background-color: var(--vscode-button-secondaryBackground) !important;
+    border-color: var(--vscode-button-secondaryBackground) !important;
+    color: var(--vscode-button-secondaryForeground) !important;
+}
+
+.layui-input, .layui-textarea {
+    background-color: var(--vscode-input-background) !important;
+    color: var(--vscode-input-foreground) !important;
+    border: 1px solid var(--vscode-input-border) !important;
+}
+.layui-input:focus, .layui-textarea:focus {
+    border-color: var(--vscode-focusBorder) !important;
+}
+.layui-form-label {
+    background-color: var(--vscode-editorWidget-background) !important;
+    color: var(--vscode-editorWidget-foreground) !important;
+    border: 1px solid var(--vscode-input-border) !important;
+}
+
+/* Buttons */
+.layui-btn-normal {
+    background-color: var(--vscode-button-background) !important;
+}
+.layui-btn-normal:hover {
+    background-color: var(--vscode-button-hoverBackground) !important;
+}
+.layui-btn-primary {
+    background-color: var(--vscode-button-secondaryBackground) !important;
+    color: var(--vscode-button-secondaryForeground) !important;
+    border: none !important;
+}
+.layui-btn-primary:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground) !important;
+}

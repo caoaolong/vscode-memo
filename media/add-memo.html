@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{NODE_MODULES_URI}}/layui/dist/css/layui.css" rel="stylesheet">
+    <link href="{{STYLE_URI}}" rel="stylesheet">
+    <title>新建备忘录</title>
+    <style>
+        body {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            /* Override background for editor area */
+            background-color: var(--vscode-editor-background) !important;
+        }
+        
+        /* Layui Theme Adaptation */
+        .layui-form-pane .layui-form-label {
+            color: var(--vscode-foreground);
+            background: var(--vscode-editorWidget-background);
+            border-color: var(--vscode-widget-border);
+        }
+        
+        .layui-input, .layui-textarea {
+            background: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            border-color: var(--vscode-widget-border);
+        }
+        
+        .layui-input:hover, .layui-textarea:hover {
+            border-color: var(--vscode-focusBorder);
+        }
+        
+        .layui-input:focus, .layui-textarea:focus {
+            border-color: var(--vscode-focusBorder) !important;
+        }
+
+        .layui-form-pane .layui-form-item[pane] {
+            border-color: var(--vscode-widget-border);
+        }
+        
+        .layui-btn-normal {
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+        }
+        
+        .layui-btn-normal:hover {
+            background-color: var(--vscode-button-hoverBackground);
+        }
+        
+        .layui-btn-primary {
+            background-color: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
+            border-color: transparent;
+        }
+        
+        .layui-btn-primary:hover {
+            background-color: var(--vscode-button-secondaryHoverBackground);
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" id="memo-title" placeholder="请输入标题" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">内容 (支持 Markdown)</label>
+            <div class="layui-input-block">
+                <textarea id="memo-content" placeholder="请输入内容" class="layui-textarea" style="height: 400px;"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item" style="text-align: right; margin-top: 20px;">
+            <button id="save-btn" class="layui-btn layui-btn-normal">保存</button>
+            <button id="cancel-btn" class="layui-btn layui-btn-primary">取消</button>
+        </div>
+    </div>
+
+    <script src="{{NODE_MODULES_URI}}/jquery/dist/jquery.min.js"></script>
+    <script src="{{NODE_MODULES_URI}}/layui/dist/layui.js"></script>
+    <script>
+        layui.use(['layer', 'form'], function() {
+            const layer = layui.layer;
+            const vscode = acquireVsCodeApi();
+
+            $('#save-btn').on('click', () => {
+                const title = $('#memo-title').val();
+                const content = $('#memo-content').val();
+                
+                if (!title && !content) {
+                    layer.msg('请输入内容');
+                    return;
+                }
+                
+                vscode.postMessage({
+                    type: 'saveMemo',
+                    title: title,
+                    content: content
+                });
+            });
+
+            $('#cancel-btn').on('click', () => {
+                vscode.postMessage({ type: 'cancel' });
+            });
+        });
+    </script>
+</body>
+</html>
