@@ -170,12 +170,11 @@ html, body {
     white-space: nowrap;
     color: inherit;
 }
-
+   
 .memo-card p {
     margin: 0;
     font-size: 12px;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.5;
@@ -249,10 +248,9 @@ html, body {
 }
 
 .settings-content {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
+    padding: 15px;
+		width: 100%;
+		margin: 0 auto;
 }
 
 /* Layui Overrides for VSCode Theme - Deep Adaptation */

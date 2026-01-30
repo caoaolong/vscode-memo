@@ -175,7 +175,6 @@ export class MemoViewProvider implements vscode.WebviewViewProvider {
         const htmlUri = vscode.Uri.joinPath(this._extensionUri, 'media', 'view.html');
         const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
         const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'style.css'));
-        const codiconsCssUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'codicons', 'codicon.css'));
         const nodeModulesUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'node_modules')).toString();
 
         const bytes = await vscode.workspace.fs.readFile(htmlUri);
@@ -183,7 +182,6 @@ export class MemoViewProvider implements vscode.WebviewViewProvider {
 
         html = html
             .replace(/{{STYLE_URI}}/g, styleUri.toString())
-            .replace(/{{CODICONS_CSS_URI}}/g, codiconsCssUri.toString())
             .replace(/{{SCRIPT_URI}}/g, scriptUri.toString())
             .replace(/{{NODE_MODULES_URI}}/g, nodeModulesUri);
 
