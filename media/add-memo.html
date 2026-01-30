@@ -7,77 +7,156 @@
     <link href="{{STYLE_URI}}" rel="stylesheet">
     <title>新建备忘录</title>
     <style>
-        body {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            /* Override background for editor area */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
             background-color: var(--vscode-editor-background) !important;
-        }
-        
-        /* Layui Theme Adaptation */
-        .layui-form-pane .layui-form-label {
-            color: var(--vscode-foreground);
-            background: var(--vscode-editorWidget-background);
-            border-color: var(--vscode-widget-border);
-        }
-        
-        .layui-input, .layui-textarea {
-            background: var(--vscode-input-background);
-            color: var(--vscode-input-foreground);
-            border-color: var(--vscode-widget-border);
-        }
-        
-        .layui-input:hover, .layui-textarea:hover {
-            border-color: var(--vscode-focusBorder);
-        }
-        
-        .layui-input:focus, .layui-textarea:focus {
-            border-color: var(--vscode-focusBorder) !important;
+            color: var(--vscode-editor-foreground);
+            font-family: var(--vscode-font-family);
         }
 
-        .layui-form-pane .layui-form-item[pane] {
-            border-color: var(--vscode-widget-border);
+        .add-memo-page {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 16px;
+            box-sizing: border-box;
         }
-        
-        .layui-btn-normal {
-            background-color: var(--vscode-button-background);
+
+        .add-memo-form {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            gap: 12px;
+        }
+
+        .add-memo-field {
+            flex-shrink: 0;
+        }
+
+        .add-memo-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--vscode-input-foreground);
+        }
+
+        .add-memo-field input {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 13px;
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 4px;
+            background: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            box-sizing: border-box;
+        }
+
+        .add-memo-field input:focus {
+            outline: none;
+            border-color: var(--vscode-focusBorder);
+        }
+
+        .add-memo-field input::placeholder {
+            color: var(--vscode-input-placeholderForeground);
+        }
+
+        .add-memo-content-wrap {
+            flex: 1;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .add-memo-content-wrap label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--vscode-input-foreground);
+        }
+
+        .add-memo-content-wrap textarea {
+            flex: 1;
+            min-height: 100px;
+            width: 100%;
+            padding: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 4px;
+            background: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            resize: none;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .add-memo-content-wrap textarea:focus {
+            outline: none;
+            border-color: var(--vscode-focusBorder);
+        }
+
+        .add-memo-content-wrap textarea::placeholder {
+            color: var(--vscode-input-placeholderForeground);
+        }
+
+        .add-memo-actions {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid var(--vscode-widget-border);
+        }
+
+        .add-memo-actions button {
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+        }
+
+        #save-btn {
+            background: var(--vscode-button-background);
             color: var(--vscode-button-foreground);
         }
-        
-        .layui-btn-normal:hover {
-            background-color: var(--vscode-button-hoverBackground);
+
+        #save-btn:hover {
+            background: var(--vscode-button-hoverBackground);
         }
-        
-        .layui-btn-primary {
-            background-color: var(--vscode-button-secondaryBackground);
+
+        #cancel-btn {
+            background: var(--vscode-button-secondaryBackground);
             color: var(--vscode-button-secondaryForeground);
-            border-color: transparent;
         }
-        
-        .layui-btn-primary:hover {
-            background-color: var(--vscode-button-secondaryHoverBackground);
+
+        #cancel-btn:hover {
+            background: var(--vscode-button-secondaryHoverBackground);
         }
     </style>
 </head>
 <body>
-    <div class="layui-form layui-form-pane">
-        <div class="layui-form-item">
-            <label class="layui-form-label">标题</label>
-            <div class="layui-input-block">
-                <input type="text" id="memo-title" placeholder="请输入标题" class="layui-input">
+    <div class="add-memo-page">
+        <form class="add-memo-form">
+            <div class="add-memo-field">
+                <label for="memo-title">标题</label>
+                <input type="text" id="memo-title" placeholder="请输入标题" autocomplete="off">
             </div>
-        </div>
-        <div class="layui-form-item layui-form-text">
-            <label class="layui-form-label">内容</label>
-            <div class="layui-input-block">
-                <textarea id="memo-content" placeholder="请输入内容" class="layui-textarea" style="height: 400px;"></textarea>
+            <div class="add-memo-content-wrap">
+                <label for="memo-content">内容</label>
+                <textarea id="memo-content" placeholder="请输入内容"></textarea>
             </div>
-        </div>
-        <div class="layui-form-item" style="text-align: right; margin-top: 20px;">
-            <button id="save-btn" class="layui-btn layui-btn-normal">保存</button>
-            <button id="cancel-btn" class="layui-btn layui-btn-primary">取消</button>
-        </div>
+            <div class="add-memo-actions">
+                <button type="button" id="cancel-btn">取消</button>
+                <button type="button" id="save-btn">保存</button>
+            </div>
+        </form>
     </div>
 
     <script src="{{NODE_MODULES_URI}}/jquery/dist/jquery.min.js"></script>

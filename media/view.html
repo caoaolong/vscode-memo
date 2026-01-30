@@ -78,24 +78,38 @@
         <h3 class="layui-font-16 header-title">设置</h3>
       </div>
       <div class="settings-content">
-        <div class="layui-row">
-          <div class="layui-col-xs12">
+        <section class="settings-section">
+          <h4 class="settings-section-title">
+            <span class="codicon codicon-key"></span>
+            安全
+          </h4>
+          <div class="settings-item">
             <button
+              type="button"
               id="reset-password-btn"
-              class="layui-btn layui-btn-fluid layui-btn-primary"
+              class="settings-btn"
             >
-              重置密码
+              <span class="codicon codicon-lock"></span>
+              <span>重置密码</span>
             </button>
           </div>
-          <div class="layui-col-xs12">
+        </section>
+        <section class="settings-section">
+          <h4 class="settings-section-title">
+            <span class="codicon codicon-database"></span>
+            数据
+          </h4>
+          <div class="settings-item">
             <button
+              type="button"
               id="clear-all-btn"
-              class="layui-btn layui-btn-fluid layui-btn-primary"
+              class="settings-btn settings-btn-danger"
             >
-              清空所有备忘录
+              <span class="codicon codicon-trash"></span>
+              <span>清空所有备忘录</span>
             </button>
           </div>
-        </div>
+        </section>
       </div>
     </div>
 
