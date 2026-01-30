@@ -26,12 +26,15 @@ layui.use(['layer', 'form', 'util'], function() {
                 if (!hasPassword) {
                     $authContainer.removeClass('hidden');
                     $authTitle.text('设置访问密码');
+                } else if (message.sessionUnlocked) {
+                    showMain();
                 } else {
                     $authContainer.removeClass('hidden');
                     $authTitle.text('输入密码进入');
                 }
                 updateLayout(currentLayout);
                 renderMemos(message.memos);
+                $('#prompt-prefix-input').val(message.promptPrefix || '');
                 break;
             case 'passwordSet':
                 hasPassword = true;
@@ -92,15 +95,9 @@ layui.use(['layer', 'form', 'util'], function() {
                 vscode.postMessage({ type: 'deleteMemo', id: memo.id });
             });
 
-            $card.on('click', () => {
-                // Future: view/edit memo
-                layer.open({
-                    type: 1,
-                    title: memo.title || '详情',
-                    area: ['90%', '80%'],
-                    content: `<div style="padding: 15px;">${memo.content}</div>`,
-                    shadeClose: true
-                });
+            $card.on('click', (e) => {
+                if ($(e.target).closest('.delete-btn').length) return;
+                vscode.postMessage({ type: 'openEditMemo', memo: memo });
             });
 
             $card.insertBefore($addMemoCard);
@@ -147,10 +144,15 @@ layui.use(['layer', 'form', 'util'], function() {
 
     $('#clear-all-btn').on('click', () => {
         layer.confirm('确定要清空所有备忘录吗？', { icon: 3, title: '警告' }, function(index) {
-            // Need to implement clearAll in Provider
-            // vscode.postMessage({ type: 'clearAll' });
-            layer.msg('该功能需后端支持');
+            vscode.postMessage({ type: 'clearAll' });
             layer.close(index);
         });
+    });
+
+    $('#prompt-prefix-input').on('input', function() {
+        const val = $(this).val().trim();
+        if (/^[a-zA-Z0-9_]*$/.test(val) || val === '') {
+            vscode.postMessage({ type: 'setPromptPrefix', value: val });
+        }
     });
 });

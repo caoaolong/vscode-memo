@@ -133,6 +133,34 @@ html, body {
 
 .list-layout {
     grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.list-layout .memo-card {
+    min-height: 50px;
+    padding: 8px 10px;
+}
+
+.list-layout .memo-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 13px;
+}
+
+.list-layout .memo-card p {
+    font-size: 11px;
+    line-height: 1.4;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.list-layout .delete-btn {
+    width: 20px;
+    height: 20px;
+    right: 4px;
+    bottom: 4px;
+    font-size: 12px;
 }
 
 .grid-layout {
@@ -323,6 +351,42 @@ html, body {
 .settings-btn-danger:hover {
     background: color-mix(in srgb, var(--vscode-errorForeground) 15%, transparent);
     border-color: var(--vscode-errorForeground);
+}
+
+.settings-input-item {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.settings-input-item label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--vscode-foreground);
+}
+
+.settings-input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 4px;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    box-sizing: border-box;
+}
+
+.settings-input:focus {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+}
+
+.settings-input-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
 }
 
 /* Layui Overrides for VSCode Theme - Deep Adaptation */

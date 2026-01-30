@@ -3,6 +3,8 @@ import * as vscode from 'vscode';
 export class MemoViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'vscode-memo-view';
     private _view?: vscode.WebviewView;
+    /** 当前编辑器会话内是否已通过密码验证，关闭窗口后重置 */
+    private _sessionUnlocked = false;
 
     constructor(
         private readonly _extensionUri: vscode.Uri,
@@ -36,6 +38,7 @@ export class MemoViewProvider implements vscode.WebviewViewProvider {
                 case 'verifyPassword': {
                     const savedPassword = this._context.globalState.get('memoPassword');
                     if (savedPassword === data.password) {
+                        this._sessionUnlocked = true;
                         webviewView.webview.postMessage({ type: 'authSuccess' });
                     } else {
                         webviewView.webview.postMessage({ type: 'authFail' });
@@ -48,6 +51,7 @@ export class MemoViewProvider implements vscode.WebviewViewProvider {
                         id: Date.now().toString(),
                         title: data.title,
                         content: data.content,
+                        prompt: data.prompt ? String(data.prompt).trim() : undefined,
                         color: this._getRandomColor()
                     });
                     await this._context.globalState.update('memos', memos);
@@ -76,16 +80,40 @@ export class MemoViewProvider implements vscode.WebviewViewProvider {
                     const memos = this._context.globalState.get('memos') || [];
                     const password = this._context.globalState.get('memoPassword');
                     const layout = this._context.globalState.get('memoLayout') || 'list';
-                    webviewView.webview.postMessage({ 
-                        type: 'initData', 
-                        memos, 
+                    const promptPrefix = this._context.globalState.get('memoPromptPrefix') || '';
+                    webviewView.webview.postMessage({
+                        type: 'initData',
+                        memos,
                         hasPassword: !!password,
-                        layout
+                        sessionUnlocked: this._sessionUnlocked,
+                        layout,
+                        promptPrefix
                     });
+                    break;
+                }
+                case 'setPromptPrefix': {
+                    const value = (data.value ?? '').trim();
+                    await this._context.globalState.update('memoPromptPrefix', value);
+                    break;
+                }
+                case 'clearAll': {
+                    const result = await vscode.window.showWarningMessage(
+                        '确定要清空所有备忘录吗？此操作不可恢复。',
+                        { modal: true },
+                        '确定'
+                    );
+                    if (result === '确定') {
+                        await this._context.globalState.update('memos', []);
+                        webviewView.webview.postMessage({ type: 'updateMemos', memos: [] });
+                    }
                     break;
                 }
                 case 'openAddMemo': {
                     this._openAddMemoPanel();
+                    break;
+                }
+                case 'openEditMemo': {
+                    this._openAddMemoPanel(data.memo);
                     break;
                 }
             }
@@ -111,10 +139,11 @@ export class MemoViewProvider implements vscode.WebviewViewProvider {
         return colors[Math.floor(Math.random() * colors.length)];
     }
 
-    private _openAddMemoPanel() {
+    private _openAddMemoPanel(editMemo?: { id: string; title?: string; content?: string; prompt?: string }) {
+        const isEdit = !!editMemo;
         const panel = vscode.window.createWebviewPanel(
             'addMemo',
-            '新建备忘录',
+            isEdit ? '编辑备忘录' : '新建备忘录',
             vscode.ViewColumn.One,
             {
                 enableScripts: true,
@@ -125,26 +154,54 @@ export class MemoViewProvider implements vscode.WebviewViewProvider {
             }
         );
 
+        let pendingEditMemo = editMemo;
+
         this._getHtmlForAddMemo(panel.webview).then(html => {
             panel.webview.html = html;
         });
 
         panel.webview.onDidReceiveMessage(async (data) => {
             switch (data.type) {
+                case 'addMemoReady': {
+                    if (pendingEditMemo) {
+                        panel.webview.postMessage({ type: 'initEditMemo', memo: pendingEditMemo });
+                        pendingEditMemo = undefined;
+                    }
+                    break;
+                }
                 case 'saveMemo': {
                     const memos: any[] = this._context.globalState.get('memos') || [];
                     memos.push({
                         id: Date.now().toString(),
                         title: data.title,
                         content: data.content,
+                        prompt: data.prompt ? String(data.prompt).trim() : undefined,
                         color: this._getRandomColor()
                     });
                     await this._context.globalState.update('memos', memos);
-                    
+
                     if (this._view) {
                         this._view.webview.postMessage({ type: 'updateMemos', memos });
                     }
-                    
+
+                    panel.dispose();
+                    break;
+                }
+                case 'updateMemo': {
+                    const memos: any[] = this._context.globalState.get('memos') || [];
+                    const index = memos.findIndex((m: any) => m.id === data.id);
+                    if (index >= 0) {
+                        memos[index] = {
+                            ...memos[index],
+                            title: data.title,
+                            content: data.content,
+                            prompt: data.prompt ? String(data.prompt).trim() : undefined
+                        };
+                        await this._context.globalState.update('memos', memos);
+                        if (this._view) {
+                            this._view.webview.postMessage({ type: 'updateMemos', memos });
+                        }
+                    }
                     panel.dispose();
                     break;
                 }

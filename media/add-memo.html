@@ -64,6 +64,22 @@
             color: var(--vscode-input-placeholderForeground);
         }
 
+        .add-memo-field .field-hint {
+            font-weight: 400;
+            color: var(--vscode-descriptionForeground);
+        }
+
+        .add-memo-field .field-error {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--vscode-errorForeground);
+        }
+
+        .add-memo-field .field-error.hidden {
+            display: none;
+        }
+
         .add-memo-content-wrap {
             flex: 1;
             min-height: 120px;
@@ -139,14 +155,28 @@
         #cancel-btn:hover {
             background: var(--vscode-button-secondaryHoverBackground);
         }
+
+        .add-memo-page-title {
+            flex-shrink: 0;
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--vscode-foreground);
+        }
     </style>
 </head>
 <body>
     <div class="add-memo-page">
+        <h2 class="add-memo-page-title" id="page-title">新建备忘录</h2>
         <form class="add-memo-form">
             <div class="add-memo-field">
                 <label for="memo-title">标题</label>
                 <input type="text" id="memo-title" placeholder="请输入标题" autocomplete="off">
+            </div>
+            <div class="add-memo-field">
+                <label for="memo-prompt">提示语 <span class="field-hint">（仅英文，用于代码补全，如 date）</span></label>
+                <input type="text" id="memo-prompt" placeholder="例如 date" autocomplete="off" pattern="[a-zA-Z0-9_]*" maxlength="64">
+                <span id="memo-prompt-error" class="field-error hidden"></span>
             </div>
             <div class="add-memo-content-wrap">
                 <label for="memo-content">内容</label>
@@ -165,21 +195,72 @@
         layui.use(['layer', 'form'], function() {
             const layer = layui.layer;
             const vscode = acquireVsCodeApi();
+            let editMemoId = null;
+
+            window.addEventListener('message', function(event) {
+                const msg = event.data;
+                if (msg.type === 'initEditMemo' && msg.memo) {
+                    const m = msg.memo;
+                    editMemoId = m.id;
+                    $('#page-title').text('编辑备忘录');
+                    $('#memo-title').val(m.title || '');
+                    $('#memo-content').val(m.content || '');
+                    $('#memo-prompt').val(m.prompt || '');
+                    $('#memo-prompt-error').addClass('hidden').text('');
+                }
+            });
+
+            vscode.postMessage({ type: 'addMemoReady' });
+
+            function isPromptValid(p) {
+                if (!p || !String(p).trim()) return true;
+                return /^[a-zA-Z][a-zA-Z0-9_]*$/.test(String(p).trim());
+            }
+
+            $('#memo-prompt').on('input', function() {
+                const val = $(this).val();
+                const $err = $('#memo-prompt-error');
+                if (!val.trim()) {
+                    $err.addClass('hidden').text('');
+                    return;
+                }
+                if (!isPromptValid(val)) {
+                    $err.removeClass('hidden').text('提示语只能使用英文字母、数字和下划线，且以字母开头');
+                } else {
+                    $err.addClass('hidden').text('');
+                }
+            });
 
             $('#save-btn').on('click', () => {
                 const title = $('#memo-title').val();
                 const content = $('#memo-content').val();
+                const prompt = $('#memo-prompt').val();
                 
                 if (!title && !content) {
-                    layer.msg('请输入内容');
+                    layer.msg('请输入标题或内容');
+                    return;
+                }
+                if (prompt && !isPromptValid(prompt)) {
+                    layer.msg('提示语只能使用英文');
                     return;
                 }
                 
-                vscode.postMessage({
-                    type: 'saveMemo',
-                    title: title,
-                    content: content
-                });
+                if (editMemoId) {
+                    vscode.postMessage({
+                        type: 'updateMemo',
+                        id: editMemoId,
+                        title: title,
+                        content: content,
+                        prompt: prompt ? String(prompt).trim() : undefined
+                    });
+                } else {
+                    vscode.postMessage({
+                        type: 'saveMemo',
+                        title: title,
+                        content: content,
+                        prompt: prompt ? String(prompt).trim() : undefined
+                    });
+                }
             });
 
             $('#cancel-btn').on('click', () => {
